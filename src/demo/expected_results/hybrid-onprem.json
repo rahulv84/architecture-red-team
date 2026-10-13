@@ -1,0 +1,24 @@
+{
+  "scenario_id": "hybrid-onprem",
+  "description": "Seeded weaknesses injected into the LedgerBridge hybrid sample. rule_ids list the deterministic checks that independently detect the flaw from the uploaded CloudFormation.",
+  "expected_flaws": [
+    {"flaw_id": "HYB-SEC-01", "agent_id": "security", "category": "Network exposure", "rule_ids": ["SEC-NET-001"]},
+    {"flaw_id": "HYB-SEC-02", "agent_id": "security", "category": "Data exposure", "rule_ids": ["SEC-STO-001"]},
+    {"flaw_id": "HYB-SEC-03", "agent_id": "security", "category": "Identity and access", "rule_ids": ["SEC-IAM-001"]},
+    {"flaw_id": "HYB-SEC-04", "agent_id": "security", "category": "Secrets management", "rule_ids": ["SEC-SEC-001"]},
+    {"flaw_id": "HYB-COMP-02", "agent_id": "compliance", "category": "Encryption of personal data", "rule_ids": ["SEC-ENC-001"]},
+    {"flaw_id": "HYB-COMP-03", "agent_id": "compliance", "category": "Retention and deletion", "rule_ids": ["COMP-DATA-001"]},
+    {"flaw_id": "HYB-COMP-04", "agent_id": "compliance", "category": "Audit logging", "rule_ids": ["COMP-LOG-001"]},
+    {"flaw_id": "HYB-RES-01", "agent_id": "resilience", "category": "Single point of failure", "rule_ids": [], "match_keywords": ["vpn"]},
+    {"flaw_id": "HYB-RES-03", "agent_id": "resilience", "category": "Queue durability", "rule_ids": ["RES-MSG-001"]},
+    {"flaw_id": "HYB-RES-04", "agent_id": "resilience", "category": "Single point of failure", "rule_ids": ["RES-HA-001"]},
+    {"flaw_id": "HYB-FIN-02", "agent_id": "finops", "category": "Data lifecycle", "rule_ids": ["COST-LOG-001", "COST-S3-001"]},
+    {"flaw_id": "HYB-PERF-02", "agent_id": "performance", "category": "Scalability bottleneck", "rule_ids": ["PERF-DB-001"]},
+    {"flaw_id": "HYB-OPS-02", "agent_id": "operability", "category": "Failure detection", "rule_ids": [], "match_keywords": ["batch"]},
+    {"flaw_id": "HYB-OPS-03", "agent_id": "operability", "category": "Alerting", "rule_ids": ["OPS-ALARM-001"]}
+  ],
+  "seeded_unsupported": [
+    {"flaw_id": "HYB-PERF-03", "title_contains": "capped at 100 Mbps"},
+    {"flaw_id": "HYB-SEC-06", "title_contains": "Mainframe SNA gateway"}
+  ]
+}

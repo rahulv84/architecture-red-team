@@ -1,0 +1,32 @@
+{
+  "scenario_id": "aws-ecommerce",
+  "description": "Seeded weaknesses injected into the ShopSphere sample. rule_ids list the deterministic checks that independently detect the flaw from the uploaded infrastructure.",
+  "expected_flaws": [
+    {"flaw_id": "AWS-SEC-01", "agent_id": "security", "category": "Network exposure", "rule_ids": ["SEC-NET-002"]},
+    {"flaw_id": "AWS-SEC-02", "agent_id": "security", "category": "Network exposure", "rule_ids": ["SEC-NET-001"]},
+    {"flaw_id": "AWS-SEC-03", "agent_id": "security", "category": "Identity and access", "rule_ids": ["SEC-IAM-001"]},
+    {"flaw_id": "AWS-SEC-04", "agent_id": "security", "category": "Secrets management", "rule_ids": ["SEC-SEC-001"]},
+    {"flaw_id": "AWS-SEC-05", "agent_id": "security", "category": "Data exposure", "rule_ids": ["SEC-STO-001"]},
+    {"flaw_id": "AWS-SEC-06", "agent_id": "security", "category": "Transport security", "rule_ids": ["SEC-ENC-002"]},
+    {"flaw_id": "AWS-SEC-07", "agent_id": "security", "category": "Encryption", "rule_ids": ["SEC-ENC-001"]},
+    {"flaw_id": "AWS-COMP-03", "agent_id": "compliance", "category": "Audit logging", "rule_ids": ["COMP-LOG-001"]},
+    {"flaw_id": "AWS-COMP-04", "agent_id": "compliance", "category": "Retention and deletion", "rule_ids": ["COMP-DATA-001"]},
+    {"flaw_id": "AWS-RES-01", "agent_id": "resilience", "category": "Single point of failure", "rule_ids": ["RES-HA-001"]},
+    {"flaw_id": "AWS-RES-02", "agent_id": "resilience", "category": "Backup and recovery", "rule_ids": ["RES-BAK-001"]},
+    {"flaw_id": "AWS-RES-03", "agent_id": "resilience", "category": "Failure domain", "rule_ids": ["RES-HA-004"]},
+    {"flaw_id": "AWS-RES-04", "agent_id": "resilience", "category": "Queue durability", "rule_ids": ["RES-MSG-001"]},
+    {"flaw_id": "AWS-RES-05", "agent_id": "resilience", "category": "Single point of failure", "rule_ids": ["RES-NAT-001"]},
+    {"flaw_id": "AWS-FIN-01", "agent_id": "finops", "category": "Right-sizing", "rule_ids": ["COST-SIZE-001"]},
+    {"flaw_id": "AWS-FIN-02", "agent_id": "finops", "category": "Data transfer", "rule_ids": ["COST-NAT-001"]},
+    {"flaw_id": "AWS-FIN-03", "agent_id": "finops", "category": "Data lifecycle", "rule_ids": ["COST-LOG-001", "COST-S3-001"]},
+    {"flaw_id": "AWS-PERF-01", "agent_id": "performance", "category": "Latency", "rule_ids": ["PERF-CHAIN-001"]},
+    {"flaw_id": "AWS-PERF-02", "agent_id": "performance", "category": "Scalability bottleneck", "rule_ids": ["PERF-DB-001"]},
+    {"flaw_id": "AWS-OPS-01", "agent_id": "operability", "category": "Alerting", "rule_ids": ["OPS-ALARM-001"]},
+    {"flaw_id": "AWS-OPS-02", "agent_id": "operability", "category": "Failure recovery", "rule_ids": ["RES-MSG-001"]},
+    {"flaw_id": "AWS-OPS-04", "agent_id": "operability", "category": "Deployment safety", "rule_ids": [], "match_keywords": ["deployment"]}
+  ],
+  "seeded_unsupported": [
+    {"flaw_id": "AWS-PERF-04", "title_contains": "saturate at about 200 requests"},
+    {"flaw_id": "AWS-OPS-05", "title_contains": "Order pods lack readiness probes"}
+  ]
+}

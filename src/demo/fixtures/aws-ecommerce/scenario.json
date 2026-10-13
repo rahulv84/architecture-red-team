@@ -1,0 +1,19 @@
+{
+  "scenario_id": "aws-ecommerce",
+  "name": "ShopSphere - AWS e-commerce platform",
+  "description": "Consumer e-commerce storefront on AWS (ALB, EC2 Auto Scaling, RDS PostgreSQL, S3, SQS, NAT gateway) with deliberately injected security, resilience, cost and operability weaknesses.",
+  "cloud_environment": "AWS",
+  "files": [
+    {"filename": "architecture.md", "role": "PRIMARY_ARCHITECTURE"},
+    {"filename": "diagram.puml", "role": "DIAGRAM"},
+    {"filename": "infrastructure.tf", "role": "INFRASTRUCTURE"},
+    {"filename": "ops-incident-notes.md", "role": "INCIDENT"}
+  ],
+  "revision": {
+    "title": "Hardening revision 1",
+    "change_notes": "Database moved to a private multi-AZ deployment with encryption and backups; security groups restricted; IAM policy scoped; DLQ and alarms added; Auto Scaling spread across two AZs. A replicated disaster-recovery bucket was added for invoices.",
+    "files": [
+      {"filename": "infrastructure.tf", "role": "INFRASTRUCTURE"}
+    ]
+  }
+}

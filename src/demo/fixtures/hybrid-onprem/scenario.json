@@ -1,0 +1,19 @@
+{
+  "scenario_id": "hybrid-onprem",
+  "name": "LedgerBridge - hybrid on-premises + AWS settlement platform",
+  "description": "On-premises ledger and batch processing connected to an AWS extension through a single site-to-site VPN, with partner integration, archiving and reporting; seeded network-boundary, dependency-failure, data-movement, compliance and operational-support concerns.",
+  "cloud_environment": "Hybrid",
+  "files": [
+    {"filename": "architecture.md", "role": "PRIMARY_ARCHITECTURE"},
+    {"filename": "diagram.puml", "role": "DIAGRAM"},
+    {"filename": "cloudformation.yaml", "role": "INFRASTRUCTURE"},
+    {"filename": "incident-2025-11-vpn-outage.md", "role": "INCIDENT"}
+  ],
+  "revision": {
+    "title": "Hardening revision 1",
+    "change_notes": "Reporting database listener restricted to the VPN CIDR and database encrypted with Multi-AZ enabled; partner bucket made private; gateway role scoped to specific resources; partner API key moved to SSM secure parameter; dead-letter queue and log retention added.",
+    "files": [
+      {"filename": "cloudformation.yaml", "role": "INFRASTRUCTURE"}
+    ]
+  }
+}

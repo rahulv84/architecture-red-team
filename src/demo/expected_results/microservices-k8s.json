@@ -1,0 +1,25 @@
+{
+  "scenario_id": "microservices-k8s",
+  "description": "Seeded weaknesses injected into the PayFlow Kubernetes sample. rule_ids list the deterministic checks that independently detect the flaw from the uploaded manifests.",
+  "expected_flaws": [
+    {"flaw_id": "K8S-SEC-01", "agent_id": "security", "category": "Workload hardening", "rule_ids": ["SEC-K8S-001"]},
+    {"flaw_id": "K8S-SEC-02", "agent_id": "security", "category": "Secrets management", "rule_ids": ["SEC-SEC-001"]},
+    {"flaw_id": "K8S-SEC-03", "agent_id": "security", "category": "Transport security", "rule_ids": ["SEC-ENC-002"]},
+    {"flaw_id": "K8S-SEC-04", "agent_id": "security", "category": "Network segmentation", "rule_ids": ["SEC-K8S-002"]},
+    {"flaw_id": "K8S-COMP-04", "agent_id": "compliance", "category": "Audit logging", "rule_ids": [], "match_keywords": ["audit"]},
+    {"flaw_id": "K8S-RES-01", "agent_id": "resilience", "category": "Single point of failure", "rule_ids": ["RES-HA-002"]},
+    {"flaw_id": "K8S-RES-02", "agent_id": "resilience", "category": "Health probing", "rule_ids": ["RES-HA-003"]},
+    {"flaw_id": "K8S-RES-03", "agent_id": "resilience", "category": "Backup and recovery", "rule_ids": [], "match_keywords": ["postgresql", "backup"]},
+    {"flaw_id": "K8S-FIN-02", "agent_id": "finops", "category": "Resource management", "rule_ids": ["CFG-K8S-001"]},
+    {"flaw_id": "K8S-PERF-01", "agent_id": "performance", "category": "Latency", "rule_ids": ["PERF-CHAIN-001"]},
+    {"flaw_id": "K8S-PERF-02", "agent_id": "performance", "category": "Scalability bottleneck", "rule_ids": ["PERF-DB-001"]},
+    {"flaw_id": "K8S-OPS-01", "agent_id": "operability", "category": "Capacity management", "rule_ids": ["CFG-K8S-001"]},
+    {"flaw_id": "K8S-OPS-02", "agent_id": "operability", "category": "Release management", "rule_ids": ["CFG-K8S-002"]},
+    {"flaw_id": "K8S-OPS-03", "agent_id": "operability", "category": "Configuration integrity", "rule_ids": ["CFG-REF-001"]},
+    {"flaw_id": "K8S-OPS-04", "agent_id": "operability", "category": "Alerting", "rule_ids": [], "match_keywords": ["alert"]}
+  ],
+  "seeded_unsupported": [
+    {"flaw_id": "K8S-PERF-04", "title_contains": "cache stampede with a 95% miss rate"},
+    {"flaw_id": "K8S-RES-05", "title_contains": "standby cluster in eu-west-3"}
+  ]
+}

@@ -1,0 +1,47 @@
+framework: ISO/IEC 27001:2022 Annex A
+version: "2025.1"
+origin: CONTROL_MAPPING
+disclaimer: >
+  Architecture-level mapping using control identifiers and short paraphrased topics. It does not reproduce the
+  standard. Mapped gaps are possible control gaps and are not an audit result or certification statement.
+controls:
+  - id: "A.5.15"
+    topic: Access control
+    architecture_relevance: Role design, least privilege, separation of duties.
+    rule_ids: [SEC-IAM-001, SEC-NET-001]
+    evidence_needed: [IAM role and policy design, access review process]
+  - id: "A.5.23"
+    topic: Information security for use of cloud services
+    architecture_relevance: Shared-responsibility decisions and cloud configuration baselines.
+    rule_ids: [SEC-STO-001, SEC-NET-002]
+    evidence_needed: [cloud configuration baseline, exception register]
+  - id: "A.8.5"
+    topic: Secure authentication
+    architecture_relevance: Authentication strength and credential handling.
+    rule_ids: [SEC-SEC-001, SEC-API-001]
+    evidence_needed: [authentication design, secrets handling]
+  - id: "A.8.13"
+    topic: Information backup
+    architecture_relevance: Backup coverage, retention and restore testing.
+    rule_ids: [RES-BAK-001, RES-DEL-001]
+    evidence_needed: [backup schedule, restore test results]
+  - id: "A.8.14"
+    topic: Redundancy of information processing facilities
+    architecture_relevance: Multi-zone / multi-site redundancy for critical components.
+    rule_ids: [RES-HA-001, RES-HA-002, RES-HA-004, RES-NAT-001]
+    evidence_needed: [failure-domain design, failover test evidence]
+  - id: "A.8.15"
+    topic: Logging
+    architecture_relevance: Audit and activity logging with protection and retention.
+    rule_ids: [COMP-LOG-001, COMP-NET-001, OPS-LOG-001]
+    evidence_needed: [log sources, retention, access to logs]
+  - id: "A.8.20"
+    topic: Network security
+    architecture_relevance: Segmentation, filtering and exposure of network services.
+    rule_ids: [SEC-NET-001, SEC-NET-002, SEC-K8S-002]
+    evidence_needed: [network diagram, security group / policy review]
+  - id: "A.8.24"
+    topic: Use of cryptography
+    architecture_relevance: Encryption at rest and in transit, key management.
+    rule_ids: [SEC-ENC-001, SEC-ENC-002]
+    evidence_needed: [encryption inventory, key management design]

@@ -1,0 +1,38 @@
+@startuml
+title LedgerBridge hybrid settlement platform
+
+package "On-premises data centre" {
+  node "Core Ledger Application" as ledger
+  database "Oracle Ledger DB" as oracle
+  node "Batch Processing (Control-M)" as batch
+  node "Nagios Monitoring" as nagios
+}
+
+package "Corporate network" {
+  node "Corporate Firewall" as fw
+}
+
+cloud "AWS eu-central-1" {
+  component "VPN Gateway" as vpn
+  component "Partner Gateway Lambda" as lambda
+  queue "Settlement Queue" as queue
+  database "Reporting DB RDS" as rds
+  storage "Archive S3 Bucket" as archive
+}
+
+cloud "External partner" {
+  component "Partner Bank API" as bank
+}
+
+ledger --> oracle : SQL
+batch --> oracle : nightly settlement read
+ledger --> fw : internal traffic
+fw --> vpn : IPsec VPN
+vpn --> lambda : private connectivity
+lambda --> bank : HTTPS (synchronous)
+batch --> queue : settlement files
+queue --> lambda : consume
+oracle --> rds : replication (GoldenGate)
+batch --> archive : archive exports
+nagios ..> ledger : checks
+@enduml

@@ -1,0 +1,36 @@
+version: "1.0"
+description: >
+  Domain scorecard rubric. A domain starts at 100. Each open finding subtracts a penalty =
+  severity_weight x evidence_multiplier. Unverified concerns (NEEDS_VALIDATION or findings that need
+  validation after moderation) are counted separately and weighted lightly, so missing information lowers
+  confidence/coverage rather than being treated as failure. Scores are rounded to the nearest 5 because the
+  underlying evidence does not support finer precision.
+severity_weights:
+  CRITICAL: 25
+  HIGH: 15
+  MEDIUM: 7
+  LOW: 3
+  INFORMATIONAL: 0
+evidence_multipliers:
+  CONFIRMED: 1.0
+  INFERRED: 0.6
+  NEEDS_VALIDATION: 0.25
+status_treatment:
+  # fraction of the penalty that still counts for a finding in this status
+  OPEN: 1.0
+  ACCEPTED: 1.0
+  DISPUTED: 1.0
+  REBUTTED: 1.0
+  DEFERRED: 1.0
+  REMEDIATION_PROPOSED: 0.5
+  RESOLVED: 0.0
+  VERIFIED: 0.0
+  REJECTED: 0.0
+bands:
+  - {min: 85, label: "Strong"}
+  - {min: 70, label: "Adequate"}
+  - {min: 50, label: "Needs attention"}
+  - {min: 0, label: "At risk"}
+overall_policy: >
+  The overall assessment is never an approval. It reports the weakest domain band and the count of
+  unresolved Critical/High findings. Architecture approval remains a human decision.

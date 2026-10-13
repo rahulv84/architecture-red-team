@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: LedgerBridge cloud extension (eu-central-1) - revision 1
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  PrivateSubnetId:
+    Type: AWS::EC2::Subnet::Id
+  CustomerGatewayIp:
+    Type: String
+  DbUser:
+    Type: String
+    Default: ledger_reporting
+  DataCentreCidr:
+    Type: String
+    Default: 10.20.0.0/16
+
+Resources:
+  VpnGateway:
+    Type: AWS::EC2::VPNGateway
+    Properties:
+      Type: ipsec.1
+      Tags:
+        - Key: Name
+          Value: ledgerbridge-vpg
+
+  CustomerGateway:
+    Type: AWS::EC2::CustomerGateway
+    Properties:
+      Type: ipsec.1
+      BgpAsn: 65000
+      IpAddress: !Ref CustomerGatewayIp
+
+  VpnConnection:
+    Type: AWS::EC2::VPNConnection
+    Properties:
+      Type: ipsec.1
+      StaticRoutesOnly: true
+      CustomerGatewayId: !Ref CustomerGateway
+      VpnGatewayId: !Ref VpnGateway
+
+  ReportingDbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Reporting database access
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 1521
+          ToPort: 1521
+          CidrIp: !Ref DataCentreCidr
+
+  ReportingDb:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: ledgerbridge-reporting
+      Engine: oracle-ee
+      DBInstanceClass: db.m5.2xlarge
+      AllocatedStorage: 400
+      MultiAZ: true
+      StorageEncrypted: true
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 7
+      AvailabilityZone: eu-central-1a
+      MasterUsername: !Ref DbUser
+      VPCSecurityGroups:
+        - !Ref ReportingDbSecurityGroup
+      Tags:
+        - Key: Data
+          Value: personal-customer-records
+
+  ReportingReplicaUs:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: ledgerbridge-reporting-us
+      SourceDBInstanceIdentifier: !GetAtt ReportingDb.DBInstanceArn
+      DBInstanceClass: db.m5.xlarge
+      AvailabilityZone: us-east-1a
+
+  ArchiveBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ledgerbridge-settlement-archive
+      Tags:
+        - Key: Data
+          Value: personal-customer-records
+
+  PartnerExchangeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ledgerbridge-partner-exchange
+      AccessControl: Private
+
+  SettlementDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ledgerbridge-settlement-dlq
+
+  SettlementQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ledgerbridge-settlement
+      VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SettlementDeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  GatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: gateway-inline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                Resource: !GetAtt SettlementQueue.Arn
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub "${ArchiveBucket.Arn}/exports/*"
+
+  PartnerGatewayFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ledgerbridge-partner-gateway
+      Runtime: python3.12
+      Handler: gateway.handler
+      Role: !GetAtt GatewayRole.Arn
+      Code:
+        S3Bucket: ledgerbridge-artifacts
+        S3Key: gateway.zip
+      Timeout: 30
+      Environment:
+        Variables:
+          PARTNER_API_KEY: "{{resolve:ssm-secure:/ledgerbridge/partner-api-key:1}}"
+          QUEUE_URL: !Ref SettlementQueue
+          ARCHIVE_BUCKET: !Ref ArchiveBucket
+
+  GatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/ledgerbridge-partner-gateway
+      RetentionInDays: 30

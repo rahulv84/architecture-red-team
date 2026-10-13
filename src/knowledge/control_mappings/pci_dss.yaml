@@ -1,0 +1,33 @@
+framework: PCI DSS v4.0 (requirement headlines)
+version: "2025.1"
+origin: CONTROL_MAPPING
+disclaimer: >
+  Headline-level architectural mapping only; requirement text is not reproduced. Applicability depends on whether
+  the environment stores, processes or transmits cardholder data. A mapped gap is a possible control gap, not
+  a compliance determination or an assessment by a Qualified Security Assessor.
+controls:
+  - id: "Req.1"
+    topic: Network security controls
+    architecture_relevance: Segmentation and restriction of traffic into and out of the cardholder data environment.
+    rule_ids: [SEC-NET-001, SEC-NET-002, SEC-K8S-002]
+    evidence_needed: [network segmentation diagram, firewall/security group rules]
+  - id: "Req.3"
+    topic: Protect stored account data
+    architecture_relevance: Encryption and retention of stored cardholder data.
+    rule_ids: [SEC-ENC-001, COMP-DATA-001]
+    evidence_needed: [data store inventory, encryption configuration, retention]
+  - id: "Req.4"
+    topic: Protect data in transit
+    architecture_relevance: Strong cryptography for transmission over open or public networks.
+    rule_ids: [SEC-ENC-002]
+    evidence_needed: [TLS configuration, data flow encryption review]
+  - id: "Req.7-8"
+    topic: Restrict and identify access
+    architecture_relevance: Need-to-know access and authenticated users/services.
+    rule_ids: [SEC-IAM-001, SEC-SEC-001]
+    evidence_needed: [role matrix, authentication design]
+  - id: "Req.10"
+    topic: Log and monitor access
+    architecture_relevance: Audit logs for system components and cardholder data access.
+    rule_ids: [COMP-LOG-001, COMP-NET-001, OPS-ALARM-001]
+    evidence_needed: [log sources, retention, monitoring coverage]

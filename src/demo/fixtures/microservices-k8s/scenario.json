@@ -1,0 +1,18 @@
+{
+  "scenario_id": "microservices-k8s",
+  "name": "PayFlow - cloud-agnostic microservices on Kubernetes",
+  "description": "Payments microservices behind an API gateway with Kafka, Redis and PostgreSQL on Kubernetes; seeded security, performance, resilience and operability concerns in the manifests and architecture notes.",
+  "cloud_environment": "Kubernetes",
+  "files": [
+    {"filename": "architecture.md", "role": "PRIMARY_ARCHITECTURE"},
+    {"filename": "architecture.drawio", "role": "DIAGRAM"},
+    {"filename": "manifests.yaml", "role": "INFRASTRUCTURE"}
+  ],
+  "revision": {
+    "title": "Hardening revision 1",
+    "change_notes": "Gateway and orders service scaled to multiple replicas with probes and resource limits; images pinned; privileged mode and hostNetwork removed; literal credentials replaced with secret references; TLS added to the Ingress; default-deny NetworkPolicy added; dangling reporting route removed.",
+    "files": [
+      {"filename": "manifests.yaml", "role": "INFRASTRUCTURE"}
+    ]
+  }
+}

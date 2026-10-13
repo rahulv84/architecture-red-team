@@ -1,0 +1,32 @@
+@startuml
+title ShopSphere AWS e-commerce platform
+left to right direction
+
+actor "Customer Browser" as customer
+
+rectangle "VPC eu-west-1" as vpc {
+  component "Application Load Balancer" as alb
+  node "Storefront App - EC2 ASG" as app
+  database "Orders PostgreSQL RDS" as db
+  queue "Orders Queue SQS" as queue
+  node "Fulfilment Worker" as worker
+  storage "Media S3 Bucket" as media
+  storage "Invoices S3 Bucket" as invoices
+  component "NAT Gateway" as nat
+}
+
+cloud "Payment Provider API" as payment
+component "CloudWatch Logs" as logs
+
+customer --> alb : HTTPS
+alb --> app : HTTP
+app --> db : SQL
+app --> queue : publish order events
+queue --> worker : consume
+worker --> db : SQL
+app --> media : read / write
+app --> invoices : invoices
+app --> nat : via NAT Gateway
+nat --> payment : HTTPS
+app ..> logs : logs
+@enduml

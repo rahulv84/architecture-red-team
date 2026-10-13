@@ -1,0 +1,33 @@
+framework: GDPR
+version: "2025.1"
+origin: CONTROL_MAPPING
+disclaimer: >
+  Architecture-level mapping prepared by the tool authors in their own words. It lists topics that regulation
+  articles address and which architectural evidence is relevant. It is not legal advice, does not reproduce the
+  regulation text, and a mapped gap is a *possible control gap*, not a determination of non-compliance.
+controls:
+  - id: "Art.5(1)(e)"
+    topic: Storage limitation
+    architecture_relevance: Retention periods and deletion mechanisms for personal data stores.
+    rule_ids: [COMP-DATA-001, COST-S3-001, COST-LOG-001]
+    evidence_needed: [documented retention period, lifecycle or TTL configuration, deletion procedure]
+  - id: "Art.25"
+    topic: Data protection by design and by default
+    architecture_relevance: Minimised exposure of personal data, private networking, restricted access defaults.
+    rule_ids: [SEC-NET-002, SEC-STO-001, SEC-NET-001]
+    evidence_needed: [data flow diagram, network exposure review, access defaults]
+  - id: "Art.30"
+    topic: Records of processing
+    architecture_relevance: Inventory of systems and data flows that process personal data.
+    rule_ids: []
+    evidence_needed: [processing inventory, data flow with classification]
+  - id: "Art.32"
+    topic: Security of processing
+    architecture_relevance: Encryption, confidentiality, resilience and ability to restore availability of personal data.
+    rule_ids: [SEC-ENC-001, SEC-ENC-002, RES-BAK-001, RES-HA-001, SEC-IAM-001, COMP-LOG-001]
+    evidence_needed: [encryption configuration, backup and restore evidence, access control design, audit logging]
+  - id: "Art.44-46"
+    topic: International transfers
+    architecture_relevance: Regions and replication targets that move personal data outside the originating jurisdiction.
+    rule_ids: [COST-XFER-001]
+    evidence_needed: [deployment regions, replication destinations, transfer mechanism]

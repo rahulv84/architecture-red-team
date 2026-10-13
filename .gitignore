@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+data/uploads/*
+data/reports/*
+data/snapshots/*
+data/checkpoints/*
+data/logs/*
+data/settings.json
+!data/**/.gitkeep
+*.egg-info/
+dist/
+build/
+docs\live-demo-*
