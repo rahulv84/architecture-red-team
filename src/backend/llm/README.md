@@ -6,7 +6,7 @@ credentials, retries, concurrency limits and structured-output validation live h
 ## Purpose and responsibility
 
 * Define the provider interface and the structured-generation pipeline (`generate_structured`).
-* Provide adapters for Anthropic, OpenAI and AWS Bedrock.
+* Provide adapters for Anthropic, OpenAI, Google Gemini and AWS Bedrock.
 * Provide `MockProvider`, the deterministic offline provider that powers SIMULATED DEMO MODE and
   the test suite.
 
@@ -19,6 +19,7 @@ credentials, retries, concurrency limits and structured-output validation live h
 | `provider_factory.py` | `create_provider(name, settings)`, `provider_catalog(settings)`, `_PROVIDERS` map |
 | `anthropic_provider.py` | `AnthropicProvider` (Messages API; structured output via the `submit_result` tool with `tool_choice: auto` - current Claude models reject forced tool choice; `max_tokens` truncation raises `ProviderError`) |
 | `openai_provider.py` | `OpenAIProvider` (Chat Completions with `response_format=json_object`, `max_completion_tokens`) |
+| `gemini_provider.py` | `GeminiProvider` (`google-genai` `generate_content`; structured output via `response_mime_type=application/json` + schema in the system instruction; SDK retries disabled; `MAX_TOKENS` truncation, safety blocks and daily/zero quotas (e.g. free tier) raise a non-retryable `ProviderError`; thinking tokens counted as output; defaults `gemini-3.8-flash` (mid tier), `gemini-3.1-pro-preview` is the top tier) |
 | `bedrock_provider.py` | `BedrockProvider` (Converse API; forced tool use; auth via Bedrock API key `AWS_BEARER_TOKEN_BEDROCK` - direct HTTPS call to the Converse REST endpoint, independent of the boto3 version - or else boto3 session/profile; temperature 0.1 - for models that reject forced `toolChoice` or `temperature` (e.g. Sonnet/Opus 5.5) it retries once without them and remembers that per model id) |
 | `mock_provider.py` | `MockProvider` (fixture-driven) |
 
@@ -91,7 +92,7 @@ architectures stop producing it.
 ## Dependencies
 
 `core.config` (`Settings`), `core.exceptions`, `models.domain` (`UsageRecord`, `FindingDraft`,
-`AgentReviewOutput`, `Severity`). SDKs (`anthropic`, `openai`, `boto3`) are imported lazily inside
+`AgentReviewOutput`, `Severity`). SDKs (`anthropic`, `openai`, `google-genai`, `boto3`) are imported lazily inside
 adapter methods.
 
 ## Role in application execution
@@ -119,7 +120,8 @@ Adding a scenario fixture: see `demo/README.md`.
 
 * `MockProvider` output is canned; it never reasons over documents and has no vision.
 * OpenAI structured output uses `json_object` mode plus schema-in-prompt (not strict JSON-schema
-  mode); validity is enforced by the repair loop.
-* Vision capability of Anthropic/OpenAI/Bedrock is assumed, not probed.
+  mode); validity is enforced by the repair loop. Gemini does the same with JSON mode: the native
+  `response_json_schema` is not used because Gemini rejects parts of Pydantic's JSON Schema output.
+* Vision capability of Anthropic/OpenAI/Gemini/Bedrock is assumed, not probed.
 * No token accounting beyond provider-reported usage; `UsageRecord.estimated_cost_usd` is never set.
 * Retries cover rate limits and timeouts only; auth/config errors fail immediately.

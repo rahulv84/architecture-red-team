@@ -22,10 +22,11 @@ Copy `.env.example` to `.env` and edit. Every variable is optional for the offli
 
 | Variable | Default | Notes |
 | --- | --- | --- |
-| `LLM_PROVIDER` | `mock` | `anthropic`, `openai`, `bedrock`, `mock` |
+| `LLM_PROVIDER` | `mock` | `anthropic`, `openai`, `gemini`, `bedrock`, `mock` |
 | `DEMO_MODE` | `true` | default state of the "Offline demo mode" toggle |
 | `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` | - / `claude-sonnet-5-5` | model IDs are editable defaults; check availability for your account |
 | `OPENAI_API_KEY` / `OPENAI_MODEL` | - / `gpt-4o` | |
+| `GEMINI_API_KEY` / `GEMINI_MODEL` | - / `gemini-3.8-flash` | mid tier; set `gemini-3.1-pro-preview` for the top tier (preview model) |
 | `AWS_REGION` / `AWS_PROFILE` / `BEDROCK_MODEL_ID` | `us-east-1` / - / `anthropic.claude-3-5-sonnet-20241022-v2:0` | uses the standard AWS credential chain |
 | `AWS_BEARER_TOKEN_BEDROCK` | - | Bedrock API key (bearer token); takes precedence over the credential chain; write-only, never persisted |
 | `MAX_CONCURRENT_AGENTS` | `6` | parallel critics and provider calls |

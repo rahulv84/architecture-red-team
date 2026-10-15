@@ -15,7 +15,7 @@ import streamlit as st  # noqa: E402
 from frontend import api_client as api  # noqa: E402
 from frontend.components import ui  # noqa: E402
 
-PROVIDERS = ("mock", "anthropic", "openai", "bedrock")
+PROVIDERS = ("mock", "anthropic", "openai", "gemini", "bedrock")
 READ_ONLY_KEYS = (("max_upload_mb", "Maximum upload size (MB)"), ("max_pdf_pages", "Maximum PDF pages"),
                   ("max_files_per_project", "Maximum files per project"), ("max_disputes_per_finding", "Maximum disputes per finding"),
                   ("checkov_timeout_seconds", "Checkov timeout (seconds)"), ("mock_latency_seconds", "Mock provider latency per agent (seconds)"))
@@ -33,9 +33,11 @@ def _changed(current: dict, proposed: dict) -> dict:
 def _key_status(settings: dict) -> None:
     anth = settings.get("anthropic_api_key_configured")
     oai = settings.get("openai_api_key_configured")
+    gem = settings.get("gemini_api_key_configured")
     brk = settings.get("bedrock_api_key_configured")
     ui.emit_html(f'Anthropic API key {ui.status_badge("COMPLETED" if anth else "PENDING", "CONFIGURED" if anth else "NOT CONFIGURED")}'
                  f' &nbsp; OpenAI API key {ui.status_badge("COMPLETED" if oai else "PENDING", "CONFIGURED" if oai else "NOT CONFIGURED")}'
+                 f' &nbsp; Gemini API key {ui.status_badge("COMPLETED" if gem else "PENDING", "CONFIGURED" if gem else "NOT CONFIGURED")}'
                  f' &nbsp; Bedrock API key {ui.status_badge("COMPLETED" if brk else "PENDING", "CONFIGURED" if brk else "NOT CONFIGURED")}')
 
 
@@ -46,9 +48,11 @@ def _general_form(settings: dict) -> None:
         provider = a.selectbox("Default provider", PROVIDERS, index=PROVIDERS.index(settings["llm_provider"]) if settings["llm_provider"] in PROVIDERS else 0)
         demo_mode = b.toggle("Offline demo mode by default", value=settings["demo_mode"],
                              help="New reviews default to the deterministic mock provider; live mode sends document content to the provider.")
-        c, d = st.columns(2)
+        c, d, gm = st.columns(3)
         anthropic_model = c.text_input("Anthropic model id", value=settings["anthropic_model"])
         openai_model = d.text_input("OpenAI model id", value=settings["openai_model"])
+        gemini_model = gm.text_input("Gemini model id", value=settings["gemini_model"],
+                                     help="Mid tier: gemini-3.8-flash (default). Top tier: gemini-3.1-pro-preview.")
         e, f, g = st.columns(3)
         bedrock_model = e.text_input("Bedrock model id", value=settings["bedrock_model_id"])
         aws_region = f.text_input("AWS region", value=settings["aws_region"])
@@ -68,7 +72,7 @@ def _general_form(settings: dict) -> None:
         if st.form_submit_button("Save settings", type="primary"):
             proposed = {
                 "llm_provider": provider, "demo_mode": demo_mode, "anthropic_model": anthropic_model.strip(),
-                "openai_model": openai_model.strip(), "bedrock_model_id": bedrock_model.strip(), "aws_region": aws_region.strip(),
+                "openai_model": openai_model.strip(), "gemini_model": gemini_model.strip(), "bedrock_model_id": bedrock_model.strip(), "aws_region": aws_region.strip(),
                 "aws_profile": aws_profile.strip(), "max_concurrent_agents": int(concurrent), "max_review_rounds": int(rounds),
                 "llm_max_retries": int(retries), "max_input_tokens": int(max_in), "max_output_tokens": int(max_out),
                 "llm_timeout_seconds": int(timeout), "enable_checkov": checkov,
@@ -85,15 +89,17 @@ def _keys_form(settings: dict) -> None:
     ui.section_label("API keys (write-only)")
     _key_status(settings)
     st.caption("Keys are sent to the local backend and held in its memory only. They are never persisted, returned or displayed. "
-               "Alternatively set ANTHROPIC_API_KEY, OPENAI_API_KEY or AWS_BEARER_TOKEN_BEDROCK in the backend environment. "
+               "Alternatively set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY or AWS_BEARER_TOKEN_BEDROCK in the backend environment. "
                "A Bedrock API key takes precedence over the AWS profile / credential chain.")
     with st.form("keys_form", clear_on_submit=True):
-        a, b, c = st.columns(3)
+        a, b, g, c = st.columns(4)
         anthropic = a.text_input("Anthropic API key", type="password", autocomplete="off")
         openai = b.text_input("OpenAI API key", type="password", autocomplete="off")
+        gemini = g.text_input("Gemini API key", type="password", autocomplete="off")
         bedrock = c.text_input("Bedrock API key", type="password", autocomplete="off")
         if st.form_submit_button("Save API keys"):
-            keys = {k: v.strip() for k, v in (("anthropic_api_key", anthropic), ("openai_api_key", openai), ("aws_bearer_token_bedrock", bedrock)) if v and v.strip()}
+            keys = {k: v.strip() for k, v in (("anthropic_api_key", anthropic), ("openai_api_key", openai), ("gemini_api_key", gemini),
+                                                ("aws_bearer_token_bedrock", bedrock)) if v and v.strip()}
             if not keys:
                 st.info("Enter at least one key to save.")
             elif ui.attempt(api.update_settings, keys) is not None:

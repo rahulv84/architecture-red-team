@@ -18,13 +18,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 SRC_DIR = Path(__file__).resolve().parents[2]  # src/: code, knowledge/, demo/
 ROOT_DIR = SRC_DIR.parent  # project root: .env, data/
 
-SUPPORTED_PROVIDERS = ("mock", "anthropic", "openai", "bedrock")
+SUPPORTED_PROVIDERS = ("mock", "anthropic", "openai", "gemini", "bedrock")
 
 # Fields that may be edited from the Settings page (secrets handled separately).
 EDITABLE_FIELDS = (
     "llm_provider",
     "anthropic_model",
     "openai_model",
+    "gemini_model",
     "aws_region",
     "aws_profile",
     "bedrock_model_id",
@@ -37,7 +38,7 @@ EDITABLE_FIELDS = (
     "llm_timeout_seconds",
     "llm_max_retries",
 )
-SECRET_FIELDS = ("anthropic_api_key", "openai_api_key", "aws_bearer_token_bedrock")
+SECRET_FIELDS = ("anthropic_api_key", "openai_api_key", "gemini_api_key", "aws_bearer_token_bedrock")
 
 
 class Settings(BaseSettings):
@@ -52,6 +53,9 @@ class Settings(BaseSettings):
     anthropic_model: str = "claude-sonnet-5-5"
     openai_api_key: SecretStr | None = None
     openai_model: str = "gpt-4o"
+    gemini_api_key: SecretStr | None = None
+    # Mid tier by default; "gemini-3.1-pro-preview" is the top tier.
+    gemini_model: str = "gemini-3.8-flash"
     aws_region: str = "us-east-1"
     aws_profile: str | None = None
     # Bedrock API key (bearer token). When set it is used instead of the AWS credential chain.
@@ -98,6 +102,7 @@ class Settings(BaseSettings):
         data = self.model_dump(mode="json", exclude=set(SECRET_FIELDS))
         data["anthropic_api_key_configured"] = bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
         data["openai_api_key_configured"] = bool(self.openai_api_key and self.openai_api_key.get_secret_value())
+        data["gemini_api_key_configured"] = bool(self.gemini_api_key and self.gemini_api_key.get_secret_value())
         data["bedrock_api_key_configured"] = bool(self.aws_bearer_token_bedrock and self.aws_bearer_token_bedrock.get_secret_value())
         data["data_dir"] = str(self.data_dir)
         return data

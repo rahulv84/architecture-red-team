@@ -62,10 +62,11 @@ Fields editable at runtime from the Settings page are listed in `EDITABLE_FIELDS
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `LLM_PROVIDER` | `mock` | `mock`, `anthropic`, `openai`, `bedrock` |
+| `LLM_PROVIDER` | `mock` | `mock`, `anthropic`, `openai`, `gemini`, `bedrock` |
 | `DEMO_MODE` | `true` | Default review mode (demo reviews always use `MockProvider`) |
 | `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` | - / `claude-sonnet-5-5` | Anthropic adapter |
 | `OPENAI_API_KEY` / `OPENAI_MODEL` | - / `gpt-4o` | OpenAI adapter |
+| `GEMINI_API_KEY` / `GEMINI_MODEL` | - / `gemini-3.8-flash` | Gemini adapter (`gemini-3.1-pro-preview` for the top tier) |
 | `AWS_REGION` / `AWS_PROFILE` / `BEDROCK_MODEL_ID` | `us-east-1` / - / Claude 3.5 Sonnet v2 id | Bedrock adapter |
 | `AWS_BEARER_TOKEN_BEDROCK` | - | Bedrock API key; used instead of the credential chain when set |
 | `MAX_CONCURRENT_AGENTS` | 6 | Parallel critics and provider-call semaphore |

@@ -21,7 +21,7 @@ critics. The result is a scorecard, findings with evidence, ADR drafts and a PDF
 * 38 deterministic rules over Terraform, CloudFormation and Kubernetes plus a dependency-graph analyzer and an optional Checkov adapter.
 * Document intake: PDF, DOCX, PPTX, Markdown/TXT, PNG/JPG/WEBP, SVG, Draw.io, Mermaid, PlantUML, Terraform, YAML/JSON (CloudFormation, Kubernetes, OpenAPI, Compose).
 * Evidence traceability: document -> component -> agent -> finding -> moderator -> human decision -> ADR/report.
-* Providers: Anthropic, AWS Bedrock, OpenAI, and a deterministic offline mock.
+* Providers: Anthropic, AWS Bedrock, OpenAI, Google Gemini, and a deterministic offline mock.
 * Durable local state: uploads, reports, snapshots and LangGraph checkpoints survive restarts; the application DB is in-memory by design.
 * Three offline sample architectures with seeded flaws, expected results and a local evaluation harness.
 
@@ -29,7 +29,7 @@ critics. The result is a scorecard, findings with evidence, ADR drafts and a PDF
 
 * Python 3.11 or later (tested with 3.11)
 * Internet access only for installing packages and for live LLM analysis
-* For live analysis: an API key or account for **one** of OpenAI, Anthropic or AWS Bedrock (not needed for the offline demo)
+* For live analysis: an API key or account for **one** of OpenAI, Anthropic, Google Gemini or AWS Bedrock (not needed for the offline demo)
 
 ## Technology / Framework Requirements
 
@@ -62,6 +62,7 @@ python src/run.py
 | --- | --- | --- |
 | OpenAI API | live analysis (one provider is enough) | `OPENAI_API_KEY`, `OPENAI_MODEL` |
 | Anthropic API | live analysis | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
+| Google Gemini API | live analysis | `GEMINI_API_KEY`, `GEMINI_MODEL` |
 | AWS Bedrock (Converse) | live analysis | `AWS_BEARER_TOKEN_BEDROCK` or `AWS_PROFILE`, `AWS_REGION`, `BEDROCK_MODEL_ID` |
 | MCP servers | not used | - |
 
@@ -92,9 +93,10 @@ The complete script is in [docs/demo-guide.md](docs/demo-guide.md).
 
    | Variable | Purpose |
    | --- | --- |
-   | `LLM_PROVIDER` | `anthropic`, `openai`, `bedrock` (or `mock`) |
+   | `LLM_PROVIDER` | `anthropic`, `openai`, `gemini`, `bedrock` (or `mock`) |
    | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Anthropic Claude |
    | `OPENAI_API_KEY`, `OPENAI_MODEL` | OpenAI |
+   | `GEMINI_API_KEY`, `GEMINI_MODEL` | Google Gemini (`gemini-3.8-flash` mid tier, default; `gemini-3.1-pro-preview` top tier) |
    | `AWS_REGION`, `AWS_PROFILE`, `BEDROCK_MODEL_ID` | AWS Bedrock (standard AWS credential chain) |
    | `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API key; when set it replaces the AWS profile / credential chain |
    | `DEMO_MODE` | default for the "offline demo" toggle |

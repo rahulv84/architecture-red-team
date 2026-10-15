@@ -59,7 +59,7 @@ SQLite files and `settings.json` are always excluded. Before writing anything it
 | Finding | Effect |
 | --- | --- |
 | a value of a `*KEY*` / `*TOKEN*` / `*SECRET*` / `*PASSWORD*` variable from your real `.env` | **blocks** (the value is never printed) |
-| AWS access key id, Anthropic / OpenAI / Bedrock API key, private key | **blocks**, except the fixed placeholders used by the test suite |
+| AWS access key id, Anthropic / OpenAI / Google (Gemini) / Bedrock API key, private key | **blocks**, except the fixed placeholders used by the test suite |
 | hard-coded `password = "..."` | warning only (the demo fixtures contain planted fake passwords) |
 
 Exit code: `0` packaged, `1` possible secrets found (nothing written), `2` invalid name or missing required files.
