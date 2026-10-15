@@ -39,7 +39,7 @@ and a PDF/JSON report. The AI never approves an architecture; it only informs th
   fixed findings as RESOLVED, keeping their history.
 - **Decision records and reports:** scorecard per domain, ADR drafts for deferred and accepted risks, PDF and JSON reports
   with full traceability (document -> component -> agent -> finding -> moderator -> decision -> ADR).
-- **Multiple model providers:** OpenAI, Anthropic, AWS Bedrock (API key or AWS credentials), and an offline deterministic
+- **Multiple model providers:** OpenAI, Anthropic, Google Gemini, AWS Bedrock (API key or AWS credentials), and an offline deterministic
   mock for demos without credentials.
 
 ## 4. Target Users
@@ -67,7 +67,7 @@ Python 3.11+, **LangGraph** (orchestration, checkpoints, human-in-the-loop inter
 external infrastructure.
 
 ## 7. Tools / Integrations
-- **LLM providers:** OpenAI API, Anthropic API, AWS Bedrock (Converse API) - one is required for live analysis
+- **LLM providers:** OpenAI API, Anthropic API, Google Gemini API, AWS Bedrock (Converse API) - one is required for live analysis
 - **Deterministic tools:** built-in IaC rule engine and dependency-graph analyser; optional Checkov adapter
 - **Knowledge base:** sample organisational standards, control mappings and per-agent rubrics (YAML/Markdown in `src/knowledge/`)
 - **No MCP servers** are required

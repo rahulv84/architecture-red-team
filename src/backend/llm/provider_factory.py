@@ -6,6 +6,7 @@ from ..core.exceptions import ProviderConfigError
 from .anthropic_provider import AnthropicProvider
 from .base_provider import LIMITER, LLMProvider
 from .bedrock_provider import BedrockProvider
+from .gemini_provider import GeminiProvider
 from .mock_provider import MockProvider
 from .openai_provider import OpenAIProvider
 
@@ -13,6 +14,7 @@ _PROVIDERS: dict[str, type[LLMProvider]] = {
     "mock": MockProvider,
     "anthropic": AnthropicProvider,
     "openai": OpenAIProvider,
+    "gemini": GeminiProvider,
     "bedrock": BedrockProvider,
 }
 

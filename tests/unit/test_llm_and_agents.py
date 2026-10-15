@@ -26,13 +26,14 @@ def test_factory_and_unknown_provider():
     s = Settings()
     assert create_provider("mock", s).name == "mock"
     with pytest.raises(ProviderConfigError):
-        create_provider("gemini", s)
+        create_provider("nope", s)
 
 
 def test_configuration_validation_without_credentials():
-    s = Settings(anthropic_api_key=None, openai_api_key=None)
+    s = Settings(anthropic_api_key=None, openai_api_key=None, gemini_api_key=None)
     assert create_provider("anthropic", s).validate_configuration().ok is False
     assert create_provider("openai", s).validate_configuration().ok is False
+    assert create_provider("gemini", s).validate_configuration().ok is False
     cat = {p["provider"]: p for p in provider_catalog(s)}
     assert cat["mock"]["configured"] and cat["mock"]["simulated"] and not cat["mock"]["vision"]
     assert "sk-" not in str(cat)
@@ -49,9 +50,11 @@ def test_with_key_configuration_ok_and_secrets_never_exposed():
 
 def test_settings_store_secrets_in_memory_only(tmp_path):
     store = SettingsStore(Settings(local_data_dir=str(tmp_path)), persist=True)
-    store.update({"anthropic_api_key": "sk-ant-secret-123456789012345", "max_review_rounds": 4})
+    store.update({"anthropic_api_key": "sk-ant-secret-123456789012345", "gemini_api_key": "gemini-secret-1234567890",
+                  "gemini_model": "gemini-3.1-pro-preview", "max_review_rounds": 4})
     saved = (tmp_path / "settings.json").read_text()
-    assert "sk-ant" not in saved and '"max_review_rounds": 4' in saved
+    assert store.get().public_view()["gemini_api_key_configured"] is True
+    assert "sk-ant" not in saved and "gemini-secret" not in saved and '"gemini_model": "gemini-3.1-pro-preview"' in saved and '"max_review_rounds": 4' in saved
     with pytest.raises(KeyError):
         store.update({"local_data_dir": "/tmp"})
     with pytest.raises(ValueError):

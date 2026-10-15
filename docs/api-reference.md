@@ -18,7 +18,7 @@ Errors share one shape: `{"error": {"code": "...", "message": "...", "details": 
 | GET | `/config` | public settings, tool availability, notices (no secrets) |
 | GET | `/providers` | catalog with `configured`, `vision`, `simulated` |
 | POST | `/providers/validate` | `{"provider": "anthropic", "check_connectivity": false}` |
-| GET / PUT | `/settings` | PUT accepts the editable fields plus write-only `anthropic_api_key` / `openai_api_key` / `aws_bearer_token_bedrock`; GET reports `*_api_key_configured` flags only |
+| GET / PUT | `/settings` | PUT accepts the editable fields plus write-only `anthropic_api_key` / `openai_api_key` / `gemini_api_key` / `aws_bearer_token_bedrock`; GET reports `*_api_key_configured` flags only |
 | GET | `/settings/tools` | built-in and Checkov availability |
 
 ## Projects, documents, demo

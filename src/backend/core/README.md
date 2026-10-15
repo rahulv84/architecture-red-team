@@ -27,7 +27,7 @@ task manager and the application container (service wiring and process lifecycle
 
 * **`SettingsStore`** is thread-safe (RLock). On construction it reads `<data_dir>/settings.json`
   and overlays only keys in `EDITABLE_FIELDS`. `update(changes)` raises `KeyError` for unknown keys
-  and `ValueError` for an unsupported provider; secrets (`anthropic_api_key`, `openai_api_key`)
+  and `ValueError` for an unsupported provider; secrets (`anthropic_api_key`, `openai_api_key`, `gemini_api_key`, `aws_bearer_token_bedrock`)
   are never written to disk and `Settings.public_view()` reports only `*_configured` flags.
 * **`TaskManager.submit`** is keyed (the key is the review id): a second submit while the first is
   active returns `False`, which the executor turns into HTTP 409.

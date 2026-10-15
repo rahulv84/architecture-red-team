@@ -25,19 +25,24 @@ def test_health_config_providers(client):
     cfg = tc.get("/api/v1/config").json()
     assert "anthropic_api_key" not in cfg["settings"] and "no authentication" in cfg["local_only_notice"]
     provs = {p["provider"]: p for p in tc.get("/api/v1/providers").json()}
-    assert set(provs) == {"mock", "anthropic", "openai", "bedrock"}
+    assert set(provs) == {"mock", "anthropic", "openai", "gemini", "bedrock"}
     v = tc.post("/api/v1/providers/validate", json={"provider": "anthropic"}).json()
     assert v["ok"] is False and "ANTHROPIC_API_KEY" in v["message"]
+    g = tc.post("/api/v1/providers/validate", json={"provider": "gemini"}).json()
+    assert g["ok"] is False and "GEMINI_API_KEY" in g["message"]
     assert tc.post("/api/v1/providers/validate", json={"provider": "nope"}).status_code == 422
 
 
 def test_settings_update_never_returns_secrets(client):
     tc, _ = client
-    r = tc.put("/api/v1/settings", json={"max_review_rounds": 2, "anthropic_api_key": "sk-ant-abcdefghijklmnopqrstuvwxyz"})
+    r = tc.put("/api/v1/settings", json={"max_review_rounds": 2, "anthropic_api_key": "sk-ant-abcdefghijklmnopqrstuvwxyz",
+                                         "gemini_api_key": "gemini-secret-1234567890", "gemini_model": "gemini-3.1-pro-preview"})
     assert r.status_code == 200
     body = r.json()
     assert body["max_review_rounds"] == 2 and body["anthropic_api_key_configured"] is True
+    assert body["gemini_api_key_configured"] is True and body["gemini_model"] == "gemini-3.1-pro-preview"
     assert "sk-ant" not in r.text and "sk-ant" not in tc.get("/api/v1/settings").text
+    assert "gemini-secret" not in r.text and "gemini-secret" not in tc.get("/api/v1/settings").text
     assert tc.put("/api/v1/settings", json={}).status_code == 422
     assert tc.put("/api/v1/settings", json={"llm_provider": "x"}).status_code == 422
 
@@ -167,3 +172,16 @@ def test_live_provider_smoke_requires_keys():  # pragma: no cover - optional int
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
         pytest.skip("ANTHROPIC_API_KEY not set")
+
+
+@pytest.mark.live
+def test_live_gemini_connectivity():  # pragma: no cover - optional integration test
+    import os
+
+    from backend.core.config import Settings
+    from backend.llm.provider_factory import create_provider
+
+    if not os.environ.get("GEMINI_API_KEY"):
+        pytest.skip("GEMINI_API_KEY not set")
+    result = create_provider("gemini", Settings()).check_connectivity()
+    assert result.ok, result.message

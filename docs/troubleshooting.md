@@ -6,7 +6,7 @@
 | `Missing Python packages: ...` | dependencies not installed in the interpreter running `src/run.py` | activate the venv and `pip install -r requirements.txt` |
 | `FastAPI backend did not become ready` | import error or slow first start | read `data/logs/backend.out.log`; run `python -m uvicorn --app-dir src backend.main:app` directly to see the traceback |
 | Streamlit shows "Backend not reachable" | backend not running or `ART_BACKEND_URL` wrong | use `python src/run.py`; for manual starts set `ART_BACKEND_URL=http://127.0.0.1:8000/api/v1` |
-| Review `FAILED` with `provider_not_configured` | live mode without a key / model access | add `ANTHROPIC_API_KEY` etc. in Settings or `.env`, use **Validate** on Settings; the app never falls back to simulated results |
+| Review `FAILED` with `provider_not_configured` | live mode without a key / model access | add `ANTHROPIC_API_KEY` / `GEMINI_API_KEY` etc. in Settings or `.env`, use **Validate** on Settings; the app never falls back to simulated results |
 | Review `FAILED`: `All specialist agents failed` | provider auth/rate-limit/timeouts | see the first lines of the error and `GET /reviews/{id}/events`; lower `MAX_CONCURRENT_AGENTS` for rate limits |
 | One agent `FAILED`, others fine | transient provider error or malformed output after one repair attempt | review is usable (partial analysis flagged); re-run with a new review |
 | Review `FAILED`: "backend restarted while this review was running" | the backend stopped mid-run | press **Start** to continue from the checkpoint (or restart if none exists) |

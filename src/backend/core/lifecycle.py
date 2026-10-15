@@ -128,7 +128,8 @@ class AppContainer:
             return create_provider("mock", settings)
         overrides: dict[str, str] = {}
         if review.model_id and review.model_id != "mock-deterministic":
-            key = {"anthropic": "anthropic_model", "openai": "openai_model", "bedrock": "bedrock_model_id"}.get(review.provider)
+            key = {"anthropic": "anthropic_model", "openai": "openai_model", "gemini": "gemini_model",
+                   "bedrock": "bedrock_model_id"}.get(review.provider)
             if key:
                 overrides[key] = review.model_id
         return create_provider(review.provider, settings.model_copy(update=overrides))
