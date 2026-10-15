@@ -42,7 +42,7 @@ flowchart TB
     GRAPH --> TOOLS
     GRAPH --> LLM
     SVC --> FS
-    LLM -->|live mode only| EXT[(Anthropic / OpenAI / Bedrock)]
+    LLM -->|live mode only| EXT[(Anthropic / OpenAI / Gemini / Bedrock)]
 ```
 
 * **Presentation** - Streamlit pages only call the REST API (`src/frontend/api_client.py`). They never import `backend`, touch SQLite or read LangGraph checkpoints.
@@ -50,7 +50,7 @@ flowchart TB
 * **Services** - plain classes wired by `src/backend/core/lifecycle.py::AppContainer` (ingestion, architecture extraction, context retrieval, reviews, decisions, revisions, scoring, reporting, snapshots, evaluation, demo, workflow).
 * **Orchestration** - `src/backend/graph/` holds the LangGraph `StateGraph`, nodes, routing, the SQLite checkpointer and the executor that runs graphs on a bounded worker pool.
 * **Tools** - deterministic checks over *parsed structures* (`src/backend/tools/`).
-* **LLM layer** - one provider interface, four adapters (`mock`, Anthropic, OpenAI, Bedrock).
+* **LLM layer** - one provider interface, five adapters (`mock`, Anthropic, OpenAI, Gemini, Bedrock).
 
 ## 3. Process and thread model
 
@@ -169,6 +169,7 @@ Because the model never writes source references itself, a finding can only poin
 | --- | --- | --- |
 | `anthropic` | `submit_result` tool (Pydantic JSON schema, `tool_choice: auto`; truncated replies fail) | yes (model dependent) |
 | `openai` | `response_format=json_object` + schema in prompt | yes (model dependent) |
+| `gemini` | `response_mime_type=application/json` + schema in system instruction (truncated / safety-blocked replies fail) | yes (model dependent) |
 | `bedrock` | Converse API forced tool use | yes (model dependent) |
 | `mock` | fixtures in `src/demo/seeded_findings/` | **no** (images are reported as not interpreted) |
 

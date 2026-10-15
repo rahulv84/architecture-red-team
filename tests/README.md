@@ -58,11 +58,12 @@ Each test gets its own data directory under pytest's `tmp_path`; nothing touches
 | `unit/test_extraction_and_tools.py` | Architecture model from the three fixtures (components, relationships, NFRs, source references, K8s selectors, regions, unresolved items); every registered rule is assigned to an agent; expected rules fire on fixtures; hardened revisions resolve rules; unresolved variables not flagged; open web ports vs SSH; keyword absence never creates a finding; deterministic dependency graph; Checkov adapter reports `NOT_EXECUTED` when missing; tool-result schema fields |
 | `unit/test_llm_and_agents.py` | Provider factory and catalog, configuration validation, secrets never exposed or persisted, `extract_json`, retry/backoff and schema-repair loop, bounded retries; each specialist's structured output, distinct tool/scope/brief per agent, FinOps brief has no prices, compliance caveat, principle origin derived not trusted, prompt-injection text stays inside the untrusted block; moderator merge/provenance, no merge of distinct rules, rejection and validation, carry-over and resolution on re-run, failed agent does not resolve, adjudication outcomes |
 | `unit/test_bedrock_provider.py` | Bedrock adapter: retry without `toolChoice`/`temperature` for models that reject them (learned per model), API-key (bearer) Converse REST calls, image base64 encoding, HTTP error mapping, region validation, key never exposed |
+| `unit/test_gemini_provider.py` | Gemini adapter (faked SDK client): mid-tier default and top-tier override, JSON mode + system instruction, thought parts excluded and thinking tokens counted, repair attempt, `MAX_TOKENS` truncation and safety blocks fail, error mapping (invalid key, 403, 429, 503, timeouts), retry, inline image bytes, client timeout with SDK retries disabled, key never exposed |
 | `unit/test_demo_reset.py` | `src/scripts/demo_reset.py`: clean-up keeps `.gitkeep`/README, `--keep-settings`, refuses unsafe data dirs, fixture parse/stray-file checks, settings-override and mock-provider warnings (temporary directories only) |
 | `unit/test_package_submission.py` | `src/scripts/package_submission.py`: file selection excludes `.env`/`data/`/caches, values from the real `.env` and real key formats block packaging (never logged), test placeholders and fake demo passwords do not, folder + zip layout, name convention |
 | `unit/test_database_scoring_reports.py` | `Database` isolation, shared serialised session across threads, monotonic event sequence, snapshot round trip and corrupt-snapshot fallback to `.bak`, scorecard separation of confirmed vs unverified and rounding, JSON report validation and readable PDF |
 | `workflow/test_review_workflow.py` | Six agents in parallel and aggregated; real interrupt and `Command` resume; decision validation and status gating; accept/dispute/defer with rebuttal and ADR; critic concession; targeted re-review and finding history; unknown impact broadens instead of skipping; max rounds ends `COMPLETED_WITH_OPEN_RISKS`; one failing specialist keeps others' results; all failing -> `FAILED`; live mode without credentials fails and never falls back to mock; cancel; checkpoint survives restart; missing checkpoint reconstructed and reported; interrupted run marked `FAILED` with guidance |
-| `integration/test_api_and_scenarios.py` | Health/config/providers; settings never return secrets; upload and review error paths; full demo flow through the HTTP API; each scenario runs offline with all six agents (minimum findings 20 / 18 / 18) and the hardened revision resolves findings; `live` smoke test (skipped without `ANTHROPIC_API_KEY`) |
+| `integration/test_api_and_scenarios.py` | Health/config/providers; settings never return secrets; upload and review error paths; full demo flow through the HTTP API; each scenario runs offline with all six agents (minimum findings 20 / 18 / 18) and the hardened revision resolves findings; `live` smoke tests (skipped without `ANTHROPIC_API_KEY` / `GEMINI_API_KEY`) |
 
 ## Conventions
 
@@ -95,7 +96,7 @@ replaced by `MockProvider`.
 ## Limitations
 
 * No frontend (Streamlit) tests.
-* Live providers (Anthropic, OpenAI, Bedrock) are covered only by configuration/translation logic
+* Live providers (Anthropic, OpenAI, Gemini, Bedrock) are covered only by configuration/translation logic
   and a skipped smoke test; request/response behaviour against real services is untested here.
 * Timing-sensitive workflow tests wait up to 90 s for background tasks; on a heavily loaded machine
   they may need a larger timeout.

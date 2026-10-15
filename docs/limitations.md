@@ -39,6 +39,7 @@ This is a local proof of concept. The points below are intentional boundaries or
 * Uploaded content is parsed with safe loaders but a determined malformed file can still cause a parse failure; decompression/alias/entity limits are heuristics.
 * Prompt-injection resistance relies on delimiting untrusted evidence, citation-by-ID and schema validation; it is not a formal guarantee.
 * Live mode sends relevant document content to the selected provider; there is no redaction beyond not including secret values in the extracted model.
+* Gemini structured output uses JSON mode plus the schema in the prompt (not Gemini's native schema enforcement), so validity depends on the repair loop as with OpenAI. The top-tier default suggestion (`gemini-3.1-pro-preview`) is a preview model and may change or be retired by Google.
 
 ## Persistence and execution
 * The application DB is volatile; durability relies on debounced JSON snapshots (a crash within the debounce window can lose the last second of writes; decisions are also kept in checkpoints once submitted).

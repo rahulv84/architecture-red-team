@@ -54,11 +54,11 @@ class ReviewService:
         demo = payload.demo_mode
         provider = "mock" if demo else (payload.provider or settings.llm_provider)
         if not demo and provider == "mock":
-            raise ValidationFailed("Live mode requires a real provider (anthropic, openai or bedrock); 'mock' is demo-only.")
+            raise ValidationFailed("Live mode requires a real provider (anthropic, openai, gemini or bedrock); 'mock' is demo-only.")
         model_id = "mock-deterministic"
         if not demo:
             model_id = payload.model_id or {
-                "anthropic": settings.anthropic_model, "openai": settings.openai_model, "bedrock": settings.bedrock_model_id,
+                "anthropic": settings.anthropic_model, "openai": settings.openai_model, "gemini": settings.gemini_model, "bedrock": settings.bedrock_model_id,
             }.get(provider, "unknown")
         arts = self.ingestion.list_for_project(payload.project_id)
         usable = [a for a in arts if a.parse_status in ("PARSED", "PARTIAL")]

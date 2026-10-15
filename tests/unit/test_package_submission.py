@@ -49,10 +49,12 @@ def test_values_from_real_env_block_packaging_without_being_logged(tmp_path):
 def test_key_formats_block_but_test_placeholders_and_fake_passwords_do_not(tmp_path):
     root = _project(tmp_path)
     fake_aws_key = "AKIA" + "ABCDEFGHIJKLMNOP"  # assembled at runtime so this file itself passes the scan
-    (root / "src" / "keys.py").write_text(f'A = "{fake_aws_key}"\nB = "sk-ant-test-123456789012345"\n', encoding="utf-8")
+    fake_google_key = "AIza" + "B" * 35
+    (root / "src" / "keys.py").write_text(f'A = "{fake_aws_key}"\nB = "sk-ant-test-123456789012345"\nC = "{fake_google_key}"\n',
+                                          encoding="utf-8")
     (root / "src" / "main.tf").write_text("  pass" + 'word = "Sup3rS3cret!2025"\n', encoding="utf-8")
     hits = {(h.path, h.line): h for h in pkg.scan(root, pkg.candidate_files(root), [])}
-    assert hits[("src/keys.py", 1)].blocking and ("src/keys.py", 2) not in hits
+    assert hits[("src/keys.py", 1)].blocking and ("src/keys.py", 2) not in hits and hits[("src/keys.py", 3)].blocking
     assert not hits[("src/main.tf", 1)].blocking
 
 

@@ -71,6 +71,7 @@ class SettingsUpdate(BaseModel):
     llm_provider: str | None = None
     anthropic_model: str | None = None
     openai_model: str | None = None
+    gemini_model: str | None = None
     aws_region: str | None = None
     aws_profile: str | None = None
     bedrock_model_id: str | None = None
@@ -84,6 +85,7 @@ class SettingsUpdate(BaseModel):
     llm_max_retries: int | None = None
     anthropic_api_key: str | None = Field(default=None, description="Held in memory only; never persisted or returned")
     openai_api_key: str | None = Field(default=None, description="Held in memory only; never persisted or returned")
+    gemini_api_key: str | None = Field(default=None, description="Held in memory only; never persisted or returned")
     aws_bearer_token_bedrock: str | None = Field(default=None, description="Bedrock API key; held in memory only; never persisted or returned")
 
 

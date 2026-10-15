@@ -39,6 +39,7 @@ KEY_PATTERNS = {
     "AWS access key id": re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"),
     "Anthropic API key": re.compile(r"\bsk-ant-[A-Za-z0-9_-]{20,}"),
     "OpenAI API key": re.compile(r"\bsk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{32,}"),
+    "Google API key": re.compile(r"\bAIza[0-9A-Za-z_-]{35}"),
     "Bedrock API key": re.compile(r"\bABSK[A-Za-z0-9+/=]{20,}"),
     "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |)PRIVATE KEY-----"),
 }
